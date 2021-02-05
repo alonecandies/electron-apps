@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <link rel="stylesheet" href="index.css">
+  </head>
+  <body>
+    <h1>Login to Devzone Project Manager </h1>
+    <form name="form" action="login.html" method="POST" onsubmit="validate()">
+      <label for="username" style="margin-right: 10px">Username:</label>
+      <input type="text" required="username" name="username" id="username" placeholder="Insert your username"><br>
+      <label for="username" style="margin-right: 15px">Password:</label>
+      <input type="password" required="password" name="password" id="password" placeholder="Insert your password"><br>
+      <input type="submit" value="Submit">
+    </form>
+    <div>
+      <button id="register" type="submit">Register</button> 
+    </div>
+    <script>
+      const {ipcRenderer} = require("electron");
+      const electron = require("electron");
+      const net=electron.remote.net;
+      function validate(){
+        var body=JSON.stringify({
+          username: document.forms['form']['username'].value,
+          password: document.forms['form']['password'].value
+        });
+        const request=net.request({
+          method:"POST",
+          url:"localhost:3000/login",
+          redirect:"follow"
+        });
+        request.on('response', (response) => { 
+          console.log(`STATUS: ${response.statusCode}`); 
+          console.log(`HEADERS: ${JSON.stringify(response.headers)}`); 
+          response.on('data', (chunk) => { 
+            console.log(`BODY: ${chunk}`) 
+          }); 
+        }); 
+        request.on('finish', () => { 
+          console.log('Request is Finished') 
+        }); 
+        request.on('abort', () => { 
+          console.log('Request is Aborted') 
+        }); 
+        request.on('error', (error) => { 
+          console.log(`ERROR: ${JSON.stringify(error)}`) 
+        }); 
+        request.on('close', (error) => { 
+          console.log('Last Transaction has occured') 
+        }); 
+        request.setHeader('Content-Type', 'application/json'); 
+        request.write(body, 'utf-8'); 
+        request.end(); 
+      } 
+        // let loginInfo ={
+        //   username: document.forms['form']['username'].value,
+        //   password: document.forms['form']['password'].value
+        // }
+        // ipcRenderer.send("loginValidate",loginInfo);
+        // }
+      document.getElementById("register").addEventListener("click",function(){
+        ipcRenderer.send("registerPage");
+      });
+    </script>
+  </body>
+</html>

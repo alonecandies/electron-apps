@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Shopping List</title>
+    <link rel="stylesheet" href="index.css">
+  </head>
+  <body>
+    <header>Shopping List</header>
+    <ul id="ul"></ul>
+    <script>
+      const electron = require('electron');
+      const ipcRenderer = electron.ipcRenderer;
+      const ul = document.querySelector("ul");
+      let count = 0;
+      //Add Item
+      ipcRenderer.on("addItemValue",function(event,item){
+        document.getElementById("ul").innerHTML += `<div id="id${count}" style="display:flex;"><li onclick = "removeItem(${count})" >${item} </li><button style="margin-left:10px; margin-right:10px" onclick=editItem(${count})>Edit </button><button onclick = deleteItem(${count})>Delete</button></div>`;
+        count++;
+      })
+      //Clear Item
+      ipcRenderer.on("clearItem",function(event){
+        ul.innerHTML ='';
+      })
+      //Remove Item
+      function removeItem(index) {
+        if(!document.getElementsByTagName("li")[index].hasAttribute("class"))
+          document.getElementsByTagName("li")[index].setAttribute("class", "line");
+        else document.getElementsByTagName("li")[index].removeAttribute("class");
+      }
+      //Edit Item
+      function editItem(index) {
+        let change = document.getElementsByTagName("li")[index];
+        change.setAttribute("contenteditable","true");
+        change.setAttribute("style","border-style:solid;");
+        change.addEventListener("keypress",function(event){
+          if (event.keyCode===13){
+            event.preventDefault();
+            change.removeAttribute("contenteditable");
+            change.removeAttribute("style");
+          }
+        })
+      }
+      //Delete Item 
+      function deleteItem(index) {
+        document.getElementById(`id${index}`).remove();
+      }
+    </script>
+  </body>
+</html>

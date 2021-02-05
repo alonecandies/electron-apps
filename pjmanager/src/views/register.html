@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+    <link rel="stylesheet" href="index.css">
+  </head>
+  <body>
+    <h1>Register your account</h1>
+    <form name="form" action="home.html" method="POST" onsubmit="register()">
+      <label for="email" style="margin-right:40px">Email:</label>
+      <input type="email" required name="email" id="email" placeholder="Input your email"><br>
+      <label for="username" style="margin-right:7px">Username:</label>
+      <input type="text" required name="username" id="username" placeholder="Input your username"><br>
+      <label for="name" style="margin-right:7.5px">Full-name:</label>
+      <input type="text" required name="name" id="name" placeholder="Input your full-name"><br>
+      <label for="password" style="margin-right:12px">Password:</label>
+      <input type="password" required name="password" id="password" placeholder="Input your password"><br>
+      <label for="team" style="margin-right:41px">Team:</label>
+      <input type="text" required name="team" id="team" placeholder="Input your team name"><br>
+      <button id="registerSubmit" type="submit">Register</button>
+    </form>
+    <script>
+      const {ipcRenderer}= require("electron");
+      function register(){
+        let registerInfo ={
+          username: document.forms['form']['username'].value,
+          password: document.forms['form']['password'].value,
+          email: document.forms['form']['email'].value,
+          name: document.forms['form']['name'].value,
+          team: document.forms['form']['team'].value,
+        }
+        ipcRenderer.send("register",registerInfo);
+      }
+    </script>
+  </body>
+</html>
